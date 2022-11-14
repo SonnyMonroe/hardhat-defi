@@ -1,14 +1,11 @@
-const { getNamedAccounts, ethers, } = require("hardhat")
-const { getWeth, AMOUNT } = require("../scripts/getWeth")
+const { ethers, getNamedAccounts, network } = require("hardhat")
+const { getWeth, AMOUNT } = require("../scripts/getWeth.js")
+const { networkConfig } = require("../helper-hardhat-config")
 
 async function main() {
     //Aave treats everything as an ERC20 token.
     await getWeth()
     const { deployer } = await getNamedAccounts()
-    //abi, address
-
-    // Lending Pool Address Provider: 0xB53C1a33016B2DC2fF3653530bfF1848a515c8c5
-    // Lending Pool: ^
     const lendingPool = await getLendingPool(deployer)
     console.log(`LendingPool address ${lendingPool.address}`)
 
@@ -48,7 +45,7 @@ async function repay(amount, daiAddress, lendingPool, account) {
     await approveErc20(daiAddress, lendingPool.address, amount, account)
     const repayTx = await lendingPool.repay(daiAddress, amount, 1, account)
     await repayTx.wait(1)
-    console.log("Repayed!")
+    console.log("Repaid!")
 }
 
 async function borrowDai(
@@ -121,7 +118,7 @@ async function approveErc20(
 
 main()
     .then(() => process.exit(0))
-    .catch((error) => {
+    .catch(error => {
         console.error(error)
         process.exit(1)
     })
